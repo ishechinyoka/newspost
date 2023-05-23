@@ -1,0 +1,236 @@
+#!/usr/bin/sh
+
+# # post, a newsmaker application, entirely written in bash for the
+# Newsroom community. 
+# It does two things:
+# 1. It uses content on the clipboard to create news articles, or a
+# set of articles as a draft; and 
+# 2. It then compiles those articles into a Newspost electronic
+# publication as an ebook. 
+# As to which function it does depends on how it is evoked.
+#
+# Preliminary variables. These variables are called from every
+# function of the program:
+progname=$(basename "$0")
+np_home="$HOME/.config/newspost"
+scriptdir="$np_home/scripts"
+newsdir="$HOME/Documents/News"
+filename="${newsdir}/tmp"
+drafts="${newsdir}/drafts"
+category=
+article_dir=
+
+# Call this function if no input is passed in, it provides a brief
+# manual on how to use this program
+#
+usage() {
+	firefox "$np_home/manual/manual.html"
+}
+
+
+# This module creates a news bulletin, depending on which other
+# function called it.
+make_bulletin() {
+# Set important variables for further processing:
+
+text="newsroom.md"
+declare when
+d=$(date +'%A %d %B %Y')
+h=$(date +%H)
+# Now what time is it?
+if [ $h -lt 12  ]
+then
+	when="Morning"
+elif [ $h -lt 18 ]
+then 
+	when="Afternoon"
+else
+	when="Evening"
+fi
+
+cd $newsdir
+awk -v time="$when" -v day="$d" -f $scriptdir/bulletin.awk $filename>$text
+cat "$HOME/Templates/Snippets/newspost.txt" >>$text
+bulletin="newspost_daily_${d// /_}_${when}_edition"
+bulletin="$HOME/Documents/Mobile/Newspost/${bulletin,,}.epub"
+# Now convert this bulletin to ebook:
+pandoc $text -o $bulletin --split-level=2 && rm $text
+}
+
+create_article() {
+	# This function creates individual articles for placemrnt in
+	# categories:
+
+	# How many current articles are there for us to add another
+	# one?
+count=$(ls "$article_dir" 2>/dev/null | wc -l)
+count=$(( count + 1))
+article="${count}.txt"
+sed -i -f $scriptdir/article.sed "$filename"
+mv "$filename" "${article_dir}/$article"
+}
+
+build_clipboard_draft()
+{
+# This function creates a whole news category from clipboard contents
+# and saves it to the drafts folder:
+
+# First sanitise the clipboard contents for a news bulletin format using
+# sed:
+sed -i -f $scriptdir/category.sed $filename
+
+# Now let's initialise our variables:
+draft="${drafts}/$category"
+initialize_draft
+awk -f $scriptdir/category.awk $filename>>$draft
+rm $filename
+}
+
+create_file_from_clipboard() {
+# This function inspects clipboard content to determine where it
+# should be placed and which other function should be used afterwards:
+
+xclip -sel clip  -r -o >$filename
+content=$(head -n2 $filename | sed '1d')
+if [[ "$content" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
+	create_article
+else
+	build_clipboard_draft
+fi
+}
+
+check_draft() {
+# check whether the passed in argument exists in the 'drafts' folder:
+
+[ -f "$drafts/$category" ]
+}
+
+check_files() {
+# check whether passed in directory indeed exists:
+
+count=$(ls $article_dir/*.txt 2>/dev/null | wc -l)
+[[ $count -gt 0 ]]
+}
+
+initialize_draft(){
+# this function is called to create a new draft if the name it gets
+# does not exist in the drafts directory:
+#
+local title
+if [[ "$category" == "culture" ]]; then
+	title="RELIGION AND CULTURE"
+elif [[ "$category" == "entertainment" ]]; then
+	title="ARTS AND ENTERTAINMENT"
+elif [[ "$category" == "technology" ]]; then
+	title="SCIENCE AND TECHNOLOGY"
+else
+title="${category^^}"
+fi
+! check_draft && echo "# $title">"$drafts/$category"
+}
+
+compile_articles() {
+	# this function is responsible for preparing the drafts to be
+	# used in the bulletin by compiling them from appropriate
+	# directories in the news articles:
+	files="${article_dir}/*.txt"
+draft="$drafts/$category"
+
+if ! check_files; then
+check_draft && return
+echo "no new articles in '$category' to scan for a draft. add new articles and run this program again." >&2
+	exit 1
+	else
+		initialize_draft
+cat $files >>$draft
+rm $files
+fi
+}
+
+put_together () {
+	# this is the workhorse of this program: takes whatever
+	# argument it receives and compiles a news bulletin using the
+	# make_bulletin module:
+
+	for i in "$@"; do
+categorize $i
+compile_articles
+	done
+
+# now read all drafts into the temporary filename:
+for p in "$@"
+do
+	post="$drafts/$p"
+cat "$post" >>$filename && rm $post
+done
+# now call the make_bulletin function to compile to epub:
+make_bulletin
+
+# and now clean up everything:
+rm $filename
+}
+
+add_to() {
+	# this function simply creates new files as article drafts
+	# using the clipboard, and then validate the input:
+if [[ -z "$1" ]]; then
+	echo "error, you cannot call this function without arguments. you have to provide name of the category to place your articles." >&2
+	exit 1
+else
+	categorize $1
+	create_file_from_clipboard
+fi
+}
+
+categorize() {
+# Normalize program input shortcuts to full directory names:
+# And act as the program's gatekeeper to throw away invalid inputs and
+# quit:
+case "$1" in
+	af) category="africa"
+		;;
+	bsn) category="business"
+		;;
+	clt) category="culture"
+		;;
+	art) category="entertainment"
+		;;
+	sp) category="sport"
+		;;
+	tch) category="technology"
+		;;
+	wrd) category="world"
+		;;
+	zw) category="zimbabwe"
+		;;
+	opn) category="opinion";;
+	*) category="${1,,}";;
+esac 
+
+article_dir="${newsdir}/articles/$category"
+# Check whether the category indeed exists, and quit if it does not:
+[[ ! -d "$article_dir" ]] && echo "No category '$category' in current Newspost categories." && exit 1
+}
+
+## Sanitise the inputs:
+clear
+if [[ "$#" -eq 0 ]]; then
+## Too lazy to type, use the environment variable to call this
+#program:
+post_categories="zimbabwe africa world business technology culture entertainment sport opinion"
+put_together $post_categories
+else
+	case "$1" in
+		-a | --add-to) add_to $2 
+			;;
+		-h | --help)
+			usage
+			exit
+			;;
+-* | --*) usage >&2
+	exit 1;;
+*)
+	put_together $@
+	esac
+fi
+

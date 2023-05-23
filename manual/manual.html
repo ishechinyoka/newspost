@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Ishe Chinyoka" />
+  <title>The Newspost Manual</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">The Newspost Manual</h1>
+<p class="author">Ishe Chinyoka</p>
+<p class="date">22 May, 2023</p>
+</header>
+<h1 id="introduction">Introduction</h1>
+<p>The <em>Newspost</em> is a news compilation and posting utility. It
+uses material on the clipboard to create articles and place them into
+designated categories.</p>
+<h2 id="synopsis">Synopsis</h2>
+<p><code>post [categories]</code>
+<code>post [-a | --add-to] category</code>
+<code>post [-h | --help]</code></p>
+<h2 id="options">Options</h2>
+<ul>
+<li>Without options, compile a preset list of categories</li>
+<li><code>--add-to</code>: {category}: Add an article, or list of
+articles, to the provided category</li>
+<li><code>--help</code>: Bring up this user guide</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Long option</th>
+<th style="text-align: left;">Short option</th>
+<th style="text-align: center;">Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>--add-to</code></td>
+<td style="text-align: left;"><code>-a</code></td>
+<td style="text-align: center;">Add article to category</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>--help</code></td>
+<td style="text-align: left;"><code>-h</code></td>
+<td style="text-align: center;">Launch manual</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">No option</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;">Compile preset categories</td>
+</tr>
+</tbody>
+</table>
+<h2 id="description">Description</h2>
+<p>The newspost utility is called <code>post</code> on the command-line.
+It does two things:</p>
+<ul>
+<li>Create news articles using content on the clipboard; and</li>
+<li>Compile those articles into an ebook for circulation.</li>
+</ul>
+<p>As to which function is evoked depends on how it is called:</p>
+<ul>
+<li>Call <code>post</code> without any arguments to have it compile all
+the available news drafts in a preset category list. For example,
+calling <code>post</code> will have it compile articles from the
+<em>zimbabwe,</em> <em>Africa, World, Science and Technology, Religion
+and Culture, Opinion, Showbiz and Sport.</em> Otherwise, when you pass
+in the -a or –add-to option, provide the name of the category which you
+want to add an article to. More below.</li>
+</ul>
+<h1 id="creating-articles">Creating Articles</h1>
+<p>To create article with <code>post</code>, simply copy any article of
+interest from the web.</p>
+<p><code>post</code> will simply decide what form of a draft is to be
+created based on its format. Hence, there are two types of articles that
+<code>post</code> can create:</p>
+<ul>
+<li>A single article; and</li>
+<li>A collection of articles saved in one draft.</li>
+</ul>
+<h3 id="formatting-articles">Formatting Articles</h3>
+<p><code>post</code> uses the first two lines of the content on the
+clipboard to decide how it has to be formatted:</p>
+<ul>
+<li><p>By default, if an article has its source as a website listed, for
+example <a href="https://news.bbc.co.uk/">BBC</a> articles are usually
+shown as “bbc.co.uk”, then the article is treated as an individual
+article. Otherwise, articles copied in groups from the Feedbro
+Newsreader will have pipes like this: “| | |”</p>
+<p>Regardless of which type of article is being created,
+<code>post</code> needs to know where to place it. This is known as
+classifying or categorising it.</p></li>
+</ul>
+<h2 id="article-categories">Article categories</h2>
+<p>Every news periodical has got categories which are useful to classify
+articles. This makes navigation through the periodical really
+exciting.</p>
+<p>It is an error if <code>post</code> is evoked to add an article
+without providing a category where the article is to be placed. Hence,
+<code>post --add-to zimbabwe</code></p>
+<p>will add a new article, whether singly or in groups, to the Zimbabwe
+category. Case does not matter. So typing,</p>
+<p><code>post --add-to World</code></p>
+<p>and</p>
+<p><code>post --add-to world</code></p>
+<p>is just the same. The article will be added to the <em>World</em>
+category.</p>
+<h3 id="where-are-category-files-located">Where are category files
+located?</h3>
+<p>On your hard drive, simply choose a directory to hold your articles.
+We call this the <em>news directory</em>.You can then make post know
+about this directory by setting the <code>NEWS_DIR</code> environment
+variable in the <code>.bashrc</code> file.</p>
+<p>This directory must have two subdirectories, “Articles” and “Drafts”.
+You can give them whichever name you like, but just make sure that one
+directory holds individual articles and another holds drafts. These will
+all be compiled to form an ebook.</p>
+<p>In the <code>articles</code> directory, create subdirectories, each
+representing a category. <code>post</code> will scan this directory for
+any extra articles when compiling the final publication: it combines
+material in the Drafts and the Articles directories.</p>
+<p>You can also decide to save yourself some typing by coming up with
+shortcuts for category names, e.g. “wrd” for <em>World</em> or “zw” for
+<em>Zimbabwe.</em></p>
+<p>More categories and shortcuts can be added or removed as needed in
+the Articles directory. To make <code>post</code> know about these
+categories, you edit the categorize function.</p>
+<h2 id="posting">Posting</h2>
+<p>Calling <code>post</code> without arguments will compile articles for
+the preset categories. You can choose which are these preset categories.
+But <code>post</code> will have each category formatted as the main
+heading, with its articles as subheadings.</p>
+<p>You can also choose to compile categories into an individual ebook by
+just calling <code>post [list-of-categories]</code></p>
+<p>For example, calling <code>post</code> like this:</p>
+<pre><code>post africa technology world</code></pre>
+<p>will create an ebook with a list of the passed in categories. Just
+make sure that the arguments you pass to post this way represent the
+available categories.</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>The following environment variables can be set in the
+<code>.bashrc</code> file:</p>
+<dl>
+<dt>NEWS_DIR</dt>
+<dd>
+The root directory of your news articles. This should house the
+“articles” and “drafts” subdirectories.
+</dd>
+<dt>POST_CATEGORIES</dt>
+<dd>
+A preset list of categories that must be compiled as a unit. This is an
+array that <code>post</code> uses.
+</dd>
+</dl>
+<h1 id="copyrights">Copyrights</h1>
+<p>This program is free software.</p>
+<p>Authr: <a href="https://www.chinyoka.com/">Ishe Chinyoka</a></p>
+</body>
+</html>
