@@ -4,6 +4,7 @@
 /Sign up for free AllAfrica Newsletters/,/our privacy policy/d
 /View enclosure:/d
 /Read more\( .n Daily Maverick\)\?:/d
+/###/d
 /More: Pindula News/d
 s/^[[:space:]]\+//
 /The post .\+ appeared first/d

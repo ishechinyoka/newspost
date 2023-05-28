@@ -91,11 +91,15 @@ create_file_from_clipboard() {
 # should be placed and which other function should be used afterwards:
 
 xclip -sel clip  -r -o >$filename
-content=$(head -n2 $filename | sed '1d')
+content=$(head -n2 $filename | tail -1)
 if [[ "$content" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
 	create_article
-else
+elif [[ $content =~ "| | |" ]]; then
 	build_clipboard_draft
+else
+	echo "Sorry, this content is not suitable for a Newspost article." >&2
+	rm $filename
+	exit 1
 fi
 }
 
@@ -217,7 +221,7 @@ clear
 if [[ "$#" -eq 0 ]]; then
 ## Too lazy to type, use the environment variable to call this
 #program:
-post_categories="zimbabwe africa world business technology culture entertainment sport opinion"
+post_categories="zimbabwe africa world business technology entertainment sport opinion"
 put_together $post_categories
 else
 	case "$1" in
