@@ -16,9 +16,9 @@ np_home="$HOME/.config/newspost"
 scriptdir="$np_home/scripts"
 newsdir="$HOME/Documents/News"
 filename="${newsdir}/tmp"
-drafts="${newsdir}/drafts"
 category=
-article_dir=
+post_categories=("zimbabwe" "africa" "world" "business" "technology" "entertainment" "sport" "opinion")
+draft=
 
 # Call this function if no input is passed in, it provides a brief
 # manual on how to use this program
@@ -58,6 +58,7 @@ pandoc $text -o $bulletin --split-level=2 && rm $text
 }
 
 create_single_article() {
+<<<<<<< HEAD
 	# This function creates individual articles for placemrnt in
 	# categories:
 
@@ -66,8 +67,14 @@ create_single_article() {
 count=$(ls "$article_dir" 2>/dev/null | wc -l)
 count=$(( count + 1))
 article="${count}.txt"
+=======
+# This function adds a single article to the news draft:
+# It does so after sanitising it using a sed script for that purpose:
+>>>>>>> 8dda92544b8a972c01fd428956516a1fc67e434c
 sed -i -f $scriptdir/article.sed "$filename"
-mv "$filename" "${article_dir}/$article"
+initialize_draft
+cat "$filename" >> "$draft"
+rm $filename
 }
 
 create_batch_articles()
@@ -79,8 +86,6 @@ create_batch_articles()
 # sed:
 sed -i -f $scriptdir/category.sed $filename
 
-# Now let's initialise our variables:
-draft="${drafts}/$category"
 initialize_draft
 awk -f $scriptdir/category.awk $filename>>$draft
 rm $filename
@@ -106,14 +111,7 @@ fi
 check_draft() {
 # check whether the passed in argument exists in the 'drafts' folder:
 
-[ -f "$drafts/$category" ]
-}
-
-check_files() {
-# check whether passed in directory indeed exists:
-
-count=$(ls $article_dir/*.txt 2>/dev/null | wc -l)
-[[ $count -gt 0 ]]
+[[ -e $draft && -f $draft ]]
 }
 
 initialize_draft(){
@@ -130,25 +128,8 @@ elif [[ "$category" == "technology" ]]; then
 else
 title="${category^^}"
 fi
-! check_draft && echo "# $title">"$drafts/$category"
-}
-
-compile_articles() {
-	# this function is responsible for preparing the drafts to be
-	# used in the bulletin by compiling them from appropriate
-	# directories in the news articles:
-	files="${article_dir}/*.txt"
-draft="$drafts/$category"
-
-if ! check_files; then
-check_draft && return
-echo "no new articles in '$category' to scan for a draft. add new articles and run this program again." >&2
-	exit 1
-	else
-		initialize_draft
-cat $files >>$draft
-rm $files
-fi
+draft="$newsdir/$category"
+! check_draft && echo "# $title">"$draft"
 }
 
 put_together () {
@@ -158,13 +139,13 @@ put_together () {
 
 	for i in "$@"; do
 categorize $i
-compile_articles
+! check_draft && echo "No new articles in '$category'. Please add at least one and run this program again." >&2 && exit 1 
 	done
 
 # now read all drafts into the temporary filename:
 for p in "$@"
 do
-	post="$drafts/$p"
+	post="$newsdir/$p"
 cat "$post" >>$filename && rm $post
 done
 # now call the make_bulletin function to compile to epub:
@@ -187,15 +168,13 @@ fi
 }
 
 categorize() {
-# Normalize program input shortcuts to full directory names:
-# And act as the program's gatekeeper to throw away invalid inputs and
-# quit:
+	# This function acts as the program's gatekeeper: use any
+	# passed in shortcuts and expand them into available
+	# categories:
 case "$1" in
 	af) category="africa"
 		;;
-	bsn) category="business"
-		;;
-	clt) category="culture"
+	bs) category="business"
 		;;
 	art) category="entertainment"
 		;;
@@ -211,9 +190,11 @@ case "$1" in
 	*) category="${1,,}";;
 esac 
 
-article_dir="${newsdir}/articles/$category"
 # Check whether the category indeed exists, and quit if it does not:
-[[ ! -d "$article_dir" ]] && echo "No category '$category' in current Newspost categories." && exit 1
+if ! echo "${post_categories[@]}" | grep -qw "$category"; then 
+echo "No category '$category' exists in the Newspost categories. Please add one to your POST_CATEGORIES environment variables and run this program again." >&2
+exit 1
+fi
 }
 
 ## Sanitise the inputs:
@@ -221,7 +202,6 @@ clear
 if [[ "$#" -eq 0 ]]; then
 ## Too lazy to type, use the environment variable to call this
 #program:
-post_categories="zimbabwe africa world business technology entertainment sport opinion"
 put_together $post_categories
 else
 	case "$1" in
