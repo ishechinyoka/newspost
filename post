@@ -57,7 +57,7 @@ bulletin="$HOME/Documents/Mobile/Newspost/${bulletin,,}.epub"
 pandoc $text -o $bulletin --split-level=2 && rm $text
 }
 
-create_article() {
+create_single_article() {
 	# This function creates individual articles for placemrnt in
 	# categories:
 
@@ -70,7 +70,7 @@ sed -i -f $scriptdir/article.sed "$filename"
 mv "$filename" "${article_dir}/$article"
 }
 
-build_clipboard_draft()
+create_batch_articles()
 {
 # This function creates a whole news category from clipboard contents
 # and saves it to the drafts folder:
@@ -93,9 +93,9 @@ create_file_from_clipboard() {
 xclip -sel clip  -r -o >$filename
 content=$(head -n2 $filename | sed '1d')
 if [[ "$content" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
-	create_article
+	create_single_article
 else
-	build_clipboard_draft
+	create_batch_articles
 fi
 }
 
