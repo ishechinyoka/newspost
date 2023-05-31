@@ -20,11 +20,9 @@ drafts="${newsdir}/drafts"
 category=
 article_dir=
 
-# Call this function if no input is passed in, it provides a brief
-# manual on how to use this program
-#
 usage() {
 	firefox "$np_home/manual/manual.html"
+	# Bring up the help manual with the --help option
 }
 
 
