@@ -12,6 +12,8 @@ s///
 G
 }
 /LISTEN NOW/,/If you can't see this embed,/d
+/    Copy link to paste in your message/d
+
 /You need to register to keep reading/,/Sign In/d
 /skip past newsletter promotion/,/after newsletter promotion/d
 /    POLITICO Live/,/Voiced by artificial intelligence/d

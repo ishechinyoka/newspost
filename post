@@ -89,11 +89,14 @@ create_file_from_clipboard() {
 # should be placed and which other function should be used afterwards:
 
 xclip -sel clip  -r -o >$filename
-content=$(head -n2 $filename | sed '1d')
+content=$(head -n2 $filename | tail -1)
 if [[ "$content" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$ ]]; then
 	create_single_article
-else
+elif [[ "$content" == "| | |" ]]; then
 	create_batch_articles
+else
+	echo "This content is not suitable for a Newspost article. Check its format and try again." >&2
+	exit 1
 fi
 }
 
