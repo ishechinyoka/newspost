@@ -84,7 +84,7 @@ awk -f $scriptdir/category.awk $filename>>$draft
 rm $filename
 }
 
-create_file_from_clipboard() {
+classify_clipboard_content() {
 # This function inspects clipboard content to determine where it
 # should be placed and which other function should be used afterwards:
 
@@ -96,6 +96,7 @@ elif [[ "$content" == "| | |" ]]; then
 	create_batch_articles
 else
 	echo "This content is not suitable for a Newspost article. Check its format and try again." >&2
+	rm $filename
 	exit 1
 fi
 }
@@ -179,7 +180,7 @@ if [[ -z "$1" ]]; then
 	exit 1
 else
 	categorize $1
-	create_file_from_clipboard
+	classify_clipboard_content
 fi
 }
 
