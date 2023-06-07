@@ -55,6 +55,24 @@ bulletin="$HOME/Documents/Mobile/Newspost/${bulletin,,}.epub"
 pandoc $text -o $bulletin --split-level=2 && rm $text
 }
 
+number_draft() {
+	## This function numbers titles for each category before
+	#compilation.
+rhdraft="$1"
+tpc="${rhdraft}-topics"
+
+# First let us find how many articles are there using the nl utility:
+grep '## ' $rhdraft | nl >"$tpc"
+sed -i "/## /R $tpc" $rhdraft
+sed -i -Ee '
+  /## /N
+  s/## .*\n(.*)/\1/'  $rhdraft
+sed -i 's/^[[:space:]]\{4,\}//' $rhdraft
+sed -i 's/^\([[:digit:]]\+\)[[:space:]]\+\(## \)/\2\1. /' $rhdraft
+rm $tpc
+}
+
+
 create_single_article() {
 	# This function creates individual articles for placemrnt in
 	# categories:
@@ -163,6 +181,7 @@ compile_articles
 for p in "$@"
 do
 	post="$drafts/$p"
+	number_draft "$post"
 cat "$post" >>$filename && rm $post
 done
 # now call the make_bulletin function to compile to epub:
