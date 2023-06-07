@@ -62,12 +62,11 @@ rhdraft="$1"
 tpc="${rhdraft}-topics"
 
 # First let us find how many articles are there using the nl utility:
-grep '## ' $rhdraft | nl >"$tpc"
+grep '## ' $rhdraft | nl | sed 's/^[[:space:]]\+//' >"$tpc"
 sed -i "/## /R $tpc" $rhdraft
 sed -i -Ee '
   /## /N
   s/## .*\n(.*)/\1/'  $rhdraft
-sed -i 's/^[[:space:]]\{4,\}//' $rhdraft
 sed -i 's/^\([[:digit:]]\+\)[[:space:]]\+\(## \)/\2\1. /' $rhdraft
 rm $tpc
 }
@@ -238,7 +237,7 @@ clear
 if [[ "$#" -eq 0 ]]; then
 ## Too lazy to type, use the environment variable to call this
 #program:
-post_categories="zimbabwe africa world business technology culture entertainment sport opinion"
+post_categories="zimbabwe africa world business technology entertainment sport opinion"
 put_together $post_categories
 else
 	case "$1" in
