@@ -11,17 +11,19 @@
 #
 # Preliminary variables. These variables are called from every
 # function of the program:
+# Most of these should be set as environment variables, if not, then
+# use the following defaults:
 progname=$(basename "$0")
-np_home="$HOME/.config/newspost"
-scriptdir="$np_home/scripts"
-newsdir="$HOME/Documents/News"
-filename="${newsdir}/tmp"
-drafts="${newsdir}/drafts"
+NP_HOME="${NP_HOME:=$HOME/.config/npost}"
+scriptdir="$NP_HOME/scripts"
+NP_NEWSDIR="$HOME/Documents/News"
+filename="${NP_NEWSDIR}/tmp"
+drafts="${NP_NEWSDIR}/drafts"
 category=
 article_dir=
 
 usage() {
-	firefox "$np_home/manual/manual.html"
+	firefox "$NP_HOME/manual/manual.html"
 	# Bring up the help manual with the --help option
 }
 
@@ -30,7 +32,10 @@ usage() {
 # function called it.
 make_bulletin() {
 # Set important variables for further processing:
-
+# Is the NEWSPOST directory for saving the final epub file set? If
+# not, save our stuff to the user's home directory and be done with
+# it:
+NP_NEWSPOST="${NP_NEWSPOST:=$HOME}"
 text="newsroom.md"
 declare when
 d=$(date +'%A %d %B %Y')
@@ -46,11 +51,11 @@ else
 	when="Evening"
 fi
 
-cd $newsdir
+cd $NP_NEWSDIR
 awk -v time="$when" -v day="$d" -f $scriptdir/bulletin.awk $filename>$text
 cat "$HOME/Templates/Snippets/newspost.txt" >>$text
 bulletin="newspost_daily_${d// /_}_${when}_edition"
-bulletin="$HOME/Documents/Mobile/Newspost/${bulletin,,}.epub"
+bulletin="${NP_NEWSPOST}/${bulletin,,}.epub"
 # Now convert this bulletin to ebook:
 pandoc $text -o $bulletin --split-level=2 && rm $text
 }
@@ -227,7 +232,7 @@ case "$1" in
 	*) category="${1,,}";;
 esac 
 
-article_dir="${newsdir}/articles/$category"
+article_dir="${NP_NEWSDIR}/articles/$category"
 # Check whether the category indeed exists, and quit if it does not:
 [[ ! -d "$article_dir" ]] && echo "No category '$category' in current Newspost categories." && exit 1
 }
@@ -235,10 +240,14 @@ article_dir="${newsdir}/articles/$category"
 ## Sanitise the inputs:
 clear
 if [[ "$#" -eq 0 ]]; then
-## Too lazy to type, use the environment variable to call this
-#program:
-post_categories="zimbabwe africa world business technology entertainment sport opinion"
-put_together $post_categories
+	# To lazy to type? Just pass in the categories in the
+	# NP_CATEGORIES and be done with it:
+	if [[ -z "$NP_CATEGORIES" ]]; then
+		echo "Your NP_CATEGORIES environment variable is not set. Please set it to provide your news categories that correspond to the directories in your news directory." >&2
+		exit 1
+	else
+put_together $NP_CATEGORIES
+	fi
 else
 	case "$1" in
 		-a | --add-to) add_to $2 

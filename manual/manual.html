@@ -169,7 +169,7 @@
 <header id="title-block-header">
 <h1 class="title">The Newspost Manual</h1>
 <p class="author">Ishe Chinyoka</p>
-<p class="date">22 May, 2023</p>
+<p class="date">7 June, 2023</p>
 </header>
 <h1 id="introduction">Introduction</h1>
 <p>The <em>Newspost</em> is a news compilation and posting utility. It
@@ -222,12 +222,12 @@ It does two things:</p>
 <p>As to which function is evoked depends on how it is called:</p>
 <ul>
 <li>Call <code>post</code> without any arguments to have it compile all
-the available news drafts in a preset category list. For example,
-calling <code>post</code> will have it compile articles from the
-<em>zimbabwe,</em> <em>Africa, World, Science and Technology, Religion
-and Culture, Opinion, Showbiz and Sport.</em> Otherwise, when you pass
-in the -a or –add-to option, provide the name of the category which you
-want to add an article to. More below.</li>
+the available news drafts in a preset category list. The list of
+categories is up to you, but you should provide it in the
+<code>NP_CATEGORIES</code> environment variable. This is what will be
+read by the Newspost utility. Otherwise, when you pass in the -a or
+–add-to option, provide the name of the category which you want to add
+an article to. More below.</li>
 </ul>
 <h1 id="creating-articles">Creating Articles</h1>
 <p>To create article with <code>post</code>, simply copy any article of
@@ -255,7 +255,7 @@ classifying or categorising it.</p></li>
 <h2 id="article-categories">Article categories</h2>
 <p>Every news periodical has got categories which are useful to classify
 articles. This makes navigation through the periodical really
-exciting.</p>
+convenient.</p>
 <p>It is an error if <code>post</code> is evoked to add an article
 without providing a category where the article is to be placed. Hence,
 <code>post --add-to zimbabwe</code></p>
@@ -270,8 +270,8 @@ category.</p>
 located?</h3>
 <p>On your hard drive, simply choose a directory to hold your articles.
 We call this the <em>news directory</em>.You can then make post know
-about this directory by setting the <code>NEWS_DIR</code> environment
-variable in the <code>.bashrc</code> file.</p>
+about this directory by setting the <code>NP_NEWSDIR</code> environment
+variable in the <code>.bashrc</code> or <code>.zshrc</code> file.</p>
 <p>This directory must have two subdirectories, “Articles” and “Drafts”.
 You can give them whichever name you like, but just make sure that one
 directory holds individual articles and another holds drafts. These will
@@ -299,18 +299,47 @@ just calling <code>post [list-of-categories]</code></p>
 make sure that the arguments you pass to post this way represent the
 available categories.</p>
 <h2 id="environment-variables">Environment Variables</h2>
-<p>The following environment variables can be set in the
-<code>.bashrc</code> file:</p>
+<p><code>newspost</code> functions properly if certain environment
+variables are set in your <code>.bashrc</code> or <code>.zshrc</code>
+file.</p>
+<p>Whilst the program comes with defaults:</p>
+<ul>
+<li><p>The defaults make reference to certain locations that might not
+be present on your system;</p></li>
+<li><p>If you want to go with the defaults, make sure to create the
+directories. <code>newspost</code> does not create missing directories,
+neither does it suggest to do so.</p></li>
+<li><p>Though defaults are provided, <em>one other environment variable
+is compulsory:</em> <code>newspost</code> will not run without it. The
+<code>$NP_CATEGORIES</code> which lists the news categories must be set.
+If not, you must always run <code>post</code> followed by a list of
+categories every time. The variable is there only for convenience if you
+just want to run <code>post</code> without arguments.</p>
+<p>The following are the environment variables that
+<code>newspost</code> uses:</p></li>
+</ul>
 <dl>
-<dt>NEWS_DIR</dt>
+<dt>NP_HOME</dt>
+<dd>
+Where <code>newspost</code> stores its configuration files. Defaults to
+the <code>$HOME/.config/npost/</code> directory.
+</dd>
+<dt>NP_NEWS_DIR</dt>
 <dd>
 The root directory of your news articles. This should house the
-“articles” and “drafts” subdirectories.
+“articles” and “drafts” subdirectories. Defaults to
+<code>$HOME/Documents/News/</code> directory.
 </dd>
-<dt>POST_CATEGORIES</dt>
+<dt>NP_CATEGORIES</dt>
 <dd>
-A preset list of categories that must be compiled as a unit. This is an
-array that <code>post</code> uses.
+A preset list of categories that must be compiled as a unit. This is a
+list that <code>post</code> uses. There is no default value for this
+variable: it is an error if you do not set it.
+</dd>
+<dt>NP_NEWSPOST</dt>
+<dd>
+Where should the final epub bulletin be placed. If not set, it defaults
+to <code>$HOME</code>, which means in your home directory.
 </dd>
 </dl>
 <h1 id="copyrights">Copyrights</h1>

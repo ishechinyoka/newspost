@@ -1,7 +1,7 @@
 ---
 title: The Newspost Manual
 author: Ishe Chinyoka
-date: 22 May, 2023
+date: 7 June, 2023
 ...
 
 # Introduction
@@ -43,10 +43,10 @@ things:
 As to which function is evoked depends on how it is called:
 
 - Call `post` without any arguments to have it compile all the
-    available news drafts in a preset category list. For example,
-    calling `post` will have it compile articles from the *zimbabwe,*
-    *Africa, World, Science and Technology, Religion and Culture,
-    Opinion, Showbiz and Sport.*
+    available news drafts in a preset category list. The list of
+    categories is up to you, but you should provide it in the
+    `NP_CATEGORIES` environment variable. This is what will be read
+    by the Newspost utility.
     Otherwise, when you pass in the -a or --add-to option, provide the
     name of the category which you want to add an article to. More
     below.
@@ -83,7 +83,7 @@ decide how it has to be formatted:
 
 Every news periodical has got categories which are useful to classify
 articles. This makes navigation through the periodical really
-exciting.
+convenient.
 
 It is an error if `post` is evoked to add an article without providing
 a category where the article is to be placed. Hence,
@@ -102,7 +102,7 @@ is just the same. The article will be added to the _World_ category.
 
 ### Where are category files located?
 
-On your hard drive, simply choose a directory to hold your articles. We call this the *news directory*.You can then make post know about this directory by setting the `NEWS_DIR` environment variable in the `.bashrc` file.
+On your hard drive, simply choose a directory to hold your articles. We call this the *news directory*.You can then make post know about this directory by setting the `NP_NEWSDIR` environment variable in the `.bashrc` or `.zshrc` file.
 
 This directory
 must have two subdirectories, "Articles" and "Drafts". You can give
@@ -149,15 +149,44 @@ available categories.
 
 ## Environment Variables
 
-The following environment variables can be set in the `.bashrc` file:
+`newspost` functions properly if certain environment variables are set
+in your `.bashrc` or `.zshrc` file.
 
-NEWS_DIR
+
+Whilst the program comes with defaults:
+
+- The defaults make reference to certain locations that might not be
+    present on your system;
+- If you want to go with the defaults, make sure to create the
+    directories. `newspost` does not create missing directories,
+    neither does it suggest to do so.
+- Though defaults are provided, *one other environment variable is
+    compulsory:* `newspost` will not run without it. The
+    `$NP_CATEGORIES` which lists the news categories must be set. If
+    not, you must always run `post` followed by a list of categories
+    every time. The variable is there only for convenience if you just
+    want to run `post` without arguments.
+
+    The following are the environment variables that `newspost` uses:
+
+NP_HOME
+:  Where `newspost` stores its configuration files. Defaults to
+    the `$HOME/.config/npost/` directory.
+
+NP_NEWS_DIR
 :  The root directory of your news articles. This should house the
-"articles" and "drafts" subdirectories.
+"articles" and "drafts" subdirectories. Defaults to
+`$HOME/Documents/News/` directory.
 
-POST_CATEGORIES
+NP_CATEGORIES
 :  A preset list of categories that must be compiled as a unit. This
-is an array that `post` uses.
+is a list that `post` uses. There is no default value for this
+variable: it is an error if you do not set it.
+
+NP_NEWSPOST
+: Where should the final epub bulletin be placed. If not set, it
+defaults to `$HOME`, which means in your home directory.
+
 
 
 # Copyrights
