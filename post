@@ -60,7 +60,7 @@ bulletin="${NP_NEWSPOST}/${bulletin,,}.epub"
 pandoc $text -o $bulletin --split-level=2 && rm $text
 }
 
-number_draft() {
+insert_section_numbers() {
 	## This function numbers titles for each category before
 	#compilation.
 rhdraft="$1"
@@ -176,16 +176,23 @@ put_together () {
 	# argument it receives and compiles a news bulletin using the
 	# make_bulletin module:
 
+	# Let us create a set of available categories for compiling
+	# this post based on what has been passed to this function
+	# rather than using the global NP_CATEGORIES. This helps us to
+	# avoid bugs about assuming what is not wanted by the user: so
+	# let us define a new array:
+	categories=()
 	for i in "$@"; do
 categorize $i
 compile_articles
+categories+=($category)
 	done
 
 # now read all drafts into the temporary filename:
-for p in "$@"
+for p in "${categories[@]}"
 do
-	post="$drafts/$p"
-	number_draft "$post"
+	post="$drafts/${p}"
+	insert_section_numbers "$post"
 cat "$post" >>$filename && rm $post
 done
 # now call the make_bulletin function to compile to epub:
@@ -239,15 +246,17 @@ article_dir="${NP_NEWSDIR}/articles/$category"
 
 ## Sanitise the inputs:
 clear
+# Program cannot run if the $NP_CATEGORIES environment variable is not
+# set: check it and exit if not set:
+	if [[ -z "$NP_CATEGORIES" ]]; then
+		echo "the NP_CATEGORIES environment variable is not set. This program cannot run without it.">&2
+		exit 1
+	fi
+
 if [[ "$#" -eq 0 ]]; then
 	# To lazy to type? Just pass in the categories in the
 	# NP_CATEGORIES and be done with it:
-	if [[ -z "$NP_CATEGORIES" ]]; then
-		echo "Your NP_CATEGORIES environment variable is not set. Please set it to provide your news categories that correspond to the directories in your news directory." >&2
-		exit 1
-	else
 put_together $NP_CATEGORIES
-	fi
 else
 	case "$1" in
 		-a | --add-to) add_to $2 
