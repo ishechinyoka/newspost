@@ -104,11 +104,19 @@ is just the same. The article will be added to the _World_ category.
 
 On your hard drive, simply choose a directory to hold your articles. We call this the *news directory*.You can then make post know about this directory by setting the `NP_NEWSDIR` environment variable in the `.bashrc` or `.zshrc` file.
 
-This directory
-must have two subdirectories, "Articles" and "Drafts". You can give
-them whichever name you like, but just make sure that one directory
-holds individual articles and another holds drafts. These will all be
-compiled to form an ebook.
+
+The `NP_NEWSDIR` contains two directories, one for holding the
+individual articles and the other for holding semi-drafts: so the
+`NP_NEWSDIR` has the "articles" and "drafts" as subdirectories:
+
+articles
+:  This should hold subdirectories representing your news categories.
+
+drafts
+:  This holds a list of articles in draft form. When news articles are
+pasted from the clipboard in groups, they are stored in this
+directory.
+
 
 In the `articles` directory, create subdirectories, each representing
 a category. `post` will scan this directory for any extra articles
