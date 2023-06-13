@@ -171,12 +171,12 @@ Whilst the program comes with defaults:
 
 NP_HOME
 :  Where `newspost` stores its configuration files. Defaults to
-    the `$HOME/.config/npost/` directory.
+    the `$HOME/.npost/` directory.
 
 NP_NEWS_DIR
 :  The root directory of your news articles. This should house the
 "articles" and "drafts" subdirectories. Defaults to
-`$HOME/Documents/News/` directory.
+`$HOME/News/` directory.
 
 NP_CATEGORIES
 :  A preset list of categories that must be compiled as a unit. This

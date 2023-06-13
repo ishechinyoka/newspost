@@ -14,9 +14,9 @@
 # Most of these should be set as environment variables, if not, then
 # use the following defaults:
 progname=$(basename "$0")
-NP_HOME="${NP_HOME:=$HOME/.config/npost}"
-scriptdir="$NP_HOME/filters"
-NP_NEWSDIR="$HOME/Documents/News"
+NP_HOME="${NP_HOME:=$HOME/.npost}"
+filters="$NP_HOME/filters"
+NP_NEWSDIR="${NP_NEWSDIR:=$HOME/News}"
 filename="${NP_NEWSDIR}/tmp"
 drafts="${NP_NEWSDIR}/drafts"
 category=
@@ -52,7 +52,7 @@ else
 fi
 
 cd $NP_NEWSDIR
-awk -v time="$when" -v day="$d" -f $scriptdir/bulletin.awk $filename>$text
+awk -v time="$when" -v day="$d" -f $filters/bulletin.awk $filename>$text
 cat "$HOME/Templates/Snippets/newspost.txt" >>$text
 bulletin="newspost_daily_${d// /_}_${when}_edition"
 bulletin="${NP_NEWSPOST}/${bulletin,,}.epub"
@@ -86,7 +86,7 @@ create_single_article() {
 count=$(ls "$article_dir" 2>/dev/null | wc -l)
 count=$(( count + 1))
 article="${count}.txt"
-sed -i -f $scriptdir/article.sed "$filename"
+sed -i -f $filters/article.sed "$filename"
 mv "$filename" "${article_dir}/$article"
 }
 
@@ -97,12 +97,12 @@ create_batch_articles()
 
 # First sanitise the clipboard contents for a news bulletin format using
 # sed:
-sed -i -f $scriptdir/category.sed $filename
+sed -i -f $filters/category.sed $filename
 
 # Now let's initialise our variables:
 draft="${drafts}/$category"
 initialize_draft
-awk -f $scriptdir/category.awk $filename>>$draft
+awk -f $filters/category.awk $filename>>$draft
 sed -i '/RMBLOCK/,/^$/d' $draft
 rm $filename
 }
