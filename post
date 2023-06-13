@@ -15,7 +15,7 @@
 # use the following defaults:
 progname=$(basename "$0")
 NP_HOME="${NP_HOME:=$HOME/.config/npost}"
-scriptdir="$NP_HOME/scripts"
+scriptdir="$NP_HOME/filters"
 NP_NEWSDIR="$HOME/Documents/News"
 filename="${NP_NEWSDIR}/tmp"
 drafts="${NP_NEWSDIR}/drafts"
@@ -103,6 +103,7 @@ sed -i -f $scriptdir/category.sed $filename
 draft="${drafts}/$category"
 initialize_draft
 awk -f $scriptdir/category.awk $filename>>$draft
+sed -i '/RMBLOCK/,/^$/d' $draft
 rm $filename
 }
 
